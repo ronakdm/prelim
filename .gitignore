@@ -1,3 +1,9 @@
+# TeX files
+theory/main.aux
+theory/main.log
+theory/main.out
+theory/main.toc
+
 # History files
 .Rhistory
 .Rapp.history
