@@ -1,4 +1,44 @@
+\subsection{Measure Theory}
+
+Here, we state fundamental definitions and results of measure theory without proof, to be used primarily in Section \ref{sec:cond_prob}.
+
+\paragraph{Notation}
+We write $f: \p{\Omega, \mc{F}} \rightarrow \p{S, \mc{S}}$ to mean $f: \Omega \rightarrow S$ is an $\p{\mc{F}, \mc{S}}$-measurable function. We say $f$ is $\mc{F}$-measurable if the codomain's $\sigma$-algebra $\mc{S}$ is understood from context.
+When no such $\mc{S}$ is specified, we understand it to be $\mc{R}$,the Borel $\sigma$-algebra.
+
+\begin{prop}
+    Given any measurable nonnegative function $f: \Omega \rightarrow [0, \infty]$, there is a sequence of nonnegative simple functions $(f_n)_n$ with $f_n \uparrow f$ pointwise.
+\end{prop}
+\begin{thm}[Monotone convergence theorem]
+    Let $\p{\Omega, \mc{F}, \mu}$ be a common measure space, $(f_n)_{n \geq 0}$ be a sequence of measurable functions from $\Omega$ into $[0, \infty]$, which are increasing pointwise to limit function $f: \Omega \rightarrow \R$. Then, $f$ is measurable, and 
+    \begin{align*}
+        \int f_n \d \mu \uparrow \int f \d \mu.
+    \end{align*}
+\end{thm}
+\begin{defi}[Generated $\sigma$-algebra]
+    For a measurable function $Z: \Omega \rightarrow \R$, we define $\sigma(Z)$ as the smallest $\sigma$-algebra (in the sense of inclusion) $\mc{F}$ on $\Omega$ such that $Z$ is $\mc{F}$-measurable.
+\end{defi}
+\begin{defi}[Absolute continuity]
+    Let $\nu$ and $\mu$ be measures defined on the same measurable space. Then, {\it $\nu$ is absolutely continuous with respect to $\mu$} (written $\nu \ll \mu$), if $\mu(A) = 0$ implies $\nu(A) = 0$ for all measurable sets $A$.
+\end{defi}
+\begin{defi}[$\sigma$-finite measure]
+    A measure $\mu$ on measurable space $\p{\Omega, \mc{F}}$ is called $\sigma$-finite is there exists a sequence $A_1, A_2, ... \in \mc{F}$ such that 
+    \begin{itemize}
+        \item $\mu(A_i) < \infty$ for each $i = 1, 2, ...$, and 
+        \item $\bigcup_{i=1}^\infty A_i = \Omega$.
+    \end{itemize}
+    In other words, the entire set can be written as a countable union of sets of finite measure.
+\end{defi}
+\begin{thm}[Radon-Nokodym theorem]
+    Let $\nu$ and $\mu$ be two $\sigma$-finite measures on $\p{\Omega, \mc{F}}$. If $\nu \ll \mu$, then there is a $\p{\mc{F}, \mc{R}}$-function $f: \Omega \rightarrow \R$ such that for all $A \in \mc{F}$,
+    \begin{align*}
+        \int_A f \d \mu = \nu(A).
+    \end{align*}
+    THe function $f$ is written $\frac{\d \nu}{\d \mu}$ and called the {\it Radon-Nikodym derivative}.
+\end{thm}
+
 \subsection{Conditional Probability}
+\label{sec:cond_prob}
 
 In this section, we define conditional probability in the language of measure theory. Let $\p{\Omega, \mc{F}_0, P}$ be a probability space, $\mc{F} \sse \mc{F}_0$ be a $\sigma$-algebra, $\p{\R, \mc{R}}$ be the real line equipped with the Borel $\sigma$-algebra, and $X: \Omega \rightarrow \mc{R}$ be a $\p{\mc{F}_0, \mc{R}}$-measurable random variable.
 
@@ -12,7 +52,18 @@ In this section, we define conditional probability in the language of measure th
     Such a $Y$ is called {\it a version of} $\E{}{X | \mc{F}}$.
 \end{defi}
 
-% TODO: Exposition.
+The $\sigma$-algebra $\mc{F}$ represents a subset of events which is analogous to the conditioning random variable in the undergraduate probability notion of conditional expectation.
+
+\begin{defi}[Variants of conditional expectation]
+    For conditional probability, we define the following function on $\mc{R}$:
+    \begin{align*}
+        A \mapsto \P{}{X \in A|\mc{F}} = \E{}{1_{X^{-1}\p{A}} | \mc{F}}.
+    \end{align*}
+    For an arbitrary measurable function $Z: \Omega \rightarrow \R$, we define
+    \begin{align*}
+        \E{}{X | Z} = \E{}{X | \sigma\p{Z}}.
+    \end{align*}
+\end{defi}
 
 Next, we establish some properties of conditional expectation.
 
@@ -49,27 +100,6 @@ Next, we establish some properties of conditional expectation.
     indicating that $P(A) = P(Y - Y' \geq \epsilon) = 0$, or that $Y \geq Y'$ a.e.. Switching the roles of $Y$ and $Y'$ gives that $Y = Y'$ a.e.. 
 \end{proof}
 
-Before showing existence, we recall the following definitions and results.
-
-\begin{defi}[Absolute continuity]
-    Let $\nu$ and $\mu$ be measures defined on the same measurable space. Then, {\it $\nu$ is absolutely continuous with respect to $\mu$} (written $\nu \ll \mu$), if $\mu(A) = 0$ implies $\nu(A) = 0$ for all measurable sets $A$.
-\end{defi}
-\begin{defi}[$\sigma$-finite measure]
-    A measure $\mu$ on measurable space $\p{\Omega, \mc{F}}$ is called $\sigma$-finite is there exists a sequence $A_1, A_2, ... \in \mc{F}$ such that 
-    \begin{itemize}
-        \item $\mu(A_i) < \infty$ for each $i = 1, 2, ...$, and 
-        \item $\bigcup_{i=1}^\infty A_i = \Omega$.
-    \end{itemize}
-    In other words, the entire set can be written as a countable union of sets of finite measure.
-\end{defi}
-\begin{thm}[Radon-Nokodym theorem]
-    Let $\nu$ and $\mu$ be two $\sigma$-finite measures on $\p{\Omega, \mc{F}}$. If $\nu \ll \mu$, then there is a $\p{\mc{F}, \mc{R}}$-function $f: \Omega \rightarrow \R$ such that for all $A \in \mc{F}$,
-    \begin{align*}
-        \int_A f \d \mu = \nu(A).
-    \end{align*}
-    THe function $f$ is written $\frac{\d \nu}{\d \mu}$ and called the {\it Radon-Nikodym derivative}.
-\end{thm}
-
 \begin{lem}[Existence]
     There exists a $Y$ that satisfies the defining properties of conditional expectation.
 \end{lem}
@@ -91,6 +121,61 @@ Before showing existence, we recall the following definitions and results.
         &= \int_A \p{Y_1 - Y_2} \d P.
     \end{align*}
     Thus, $Y_1 - Y_2$ is a version of $\E{}{X | \mc{F}}$.
+\end{proof}
+
+\begin{prop}[Properties of condtional expectation]
+    The following hold:
+    \begin{enumerate}
+        \item {\bf Linearity:} For any $a \in \R$,
+        \begin{align*}
+            \E{}{aX + Y | \mc{F}} = a\E{}{X | \mc{F}} + \E{}{Y | \mc{F}}.
+        \end{align*}
+        \item {\bf Monotonicity:} If $X \leq Y$ a.e., then 
+        \begin{align*}
+            \E{}{X | \mc{F}} \leq \E{}{Y | \mc{F}} \text{ a.e.}.
+        \end{align*}
+        \item {\bf Preservation of limits:} If $X_n \geq 0$ and $X_n \uparrow X$, then
+        \begin{align*}
+            \E{}{X_n | \mc{F}} \uparrow \E{}{X | \mc{F}}.
+        \end{align*}
+    \end{enumerate}
+\end{prop}
+\begin{proof}
+    \begin{enumerate}
+        \item The RHS is $\mc{F}$-measurable, as it is a linear combination of $\mc{F}$-measurable functions. Then, for any $A \in \mc{F}$,
+        \begin{align*}
+            \int_A a\E{}{X | \mc{F}} + \E{}{Y | \mc{F}} \d P &= a \int_A \E{}{X | \mc{F}} \d P +  \int_A \E{}{Y | \mc{F}} \d P\\
+            &= a \int_A X \d P +  \int_A Y \d P\\
+            &= \int_A aX + Y \d P.
+        \end{align*}
+        \item Take any $\epsilon$, and let $A = \{\omega: \E{}{X | \mc{F}}(w) - \E{}{y | \mc{F}}(w) \geq \epsilon\}$. Then,
+        \begin{align*}
+            \int_A \E{}{X | \mc{F}} \d P = \int_A X \d P \leq \int_A Y \d P = \int_A \E{}{Y | \mc{F}} \d P.
+        \end{align*}
+        Then,
+        \begin{align*}
+            0 &\geq \int_A \E{}{X | \mc{F}} \d P -  \int_A \E{}{Y | \mc{F}} \d P\\
+            &\geq \epsilon P(A),
+        \end{align*}
+        so the set set $A$ has zero measure for all $\epsilon$. This means that $\E{}{X | \mc{F}} \leq \E{}{Y | \mc{F}}$ a.e..
+        \item First, let $Y_n = X - X_n$. Due to linearity and monotonicity, it sufficies to show that $\E{}{Y_n | \mc{F}} \downarrow 0$. Because $X(\omega) \geq Y_n(\omega) \geq 0$, and $Y_n(\omega)$ in monotonically non-increasing in $n$,  
+    \end{enumerate}
+\end{proof}
+
+\begin{defi}[Regular conditional distribution]
+    Let $\p{\Omega, \mc{F}. P}$ be a probability space, $\mc{G} \sse \mc{F}$ be a $\sigma$-algebra, $X: \Omega \rightarrow S$ be a $(\mc{F}, \mc{S})$-measurable map. The function $\mu: \Omega \times \mc{S} \rightarrow [0, 1]$ is said to be a {\it regular conditional distribution (r.c.d.)} for $X$ given $\mc{G}$ if
+    \begin{enumerate}[label=(\roman*)]
+        \item For each $A$, the function $\omega \mapsto \mu(\omega, A)$ is a version of $\P{}{X \in A | \mc{G}}$.
+        \item For a.e. $\omega$, the function $A \mapsto \mu(\omega, A)$ is a probability measure on $(S, \mc{S})$.
+    \end{enumerate}
+\end{defi}
+
+\begin{thm}
+    If $(S, \mc{S}) = (\R, \mc{R})$, that is that $X$ is measurable with respect to $\mc{F}$ and the Borel $\sigma$-algebra, then there exists an r.c.d..
+\end{thm}
+\begin{proof}
+    % TODO:
+    lol
 \end{proof}
 
 
