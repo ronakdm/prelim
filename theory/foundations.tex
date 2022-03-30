@@ -1,0 +1,98 @@
+\subsection{Conditional Probability}
+
+In this section, we define conditional probability in the language of measure theory. Let $\p{\Omega, \mc{F}_0, P}$ be a probability space, $\mc{F} \sse \mc{F}_0$ be a $\sigma$-algebra, $\p{\R, \mc{R}}$ be the real line equipped with the Borel $\sigma$-algebra, and $X: \Omega \rightarrow \mc{R}$ be a $\p{\mc{F}_0, \mc{R}}$-measurable random variable.
+
+
+\begin{defi}[Conditional expectation]
+    Let $\E{}{\abs{X}} < \infty$. We define the {\it conditional expectation of $X$ given $\mc{F}$, or $\E{}{X | \mc{F}}$}, to be any random variable $Y$ that satisfies
+    \begin{enumerate}[label=(\roman*)]
+        \item $Y$ is $\p{\mc{F}, \mc{R}}$-measurable, and
+        \item for all $A \in \mc{F}$, $\int_A X \d P = \int_A Y \d P$.
+    \end{enumerate} 
+    Such a $Y$ is called {\it a version of} $\E{}{X | \mc{F}}$.
+\end{defi}
+
+% TODO: Exposition.
+
+Next, we establish some properties of conditional expectation.
+
+\begin{lem}[Integrability]
+    If $Y = \E{}{X | \mc{F}}$ (a.e.), then $Y$ is integrable.
+\end{lem}
+\begin{proof}
+    Let $A = \br{\omega \in \Omega: Y(\omega) > 0}$, which is a $\mc{F}$-measurable set, as $(0, \infty) \in \mc{R}$ and $Y$ is a measurable function. Then, use property (ii) twice.
+    \begin{align*}
+        \int_A Y \d P &= \int_A X \d P \leq \int_A \abs{X} \d P.\\
+        \int_{A^c} -Y \d P &= \int_{A^c} -X \d P \leq \int_{A^c} \abs{X} \d P.
+    \end{align*} 
+    Then,
+    \begin{align*}
+        \E{}{\abs{Y}} = \int_A Y \d P + \int_{A^c} -Y \d P \leq \int_A \abs{X} \d P + \int_{A^c} \abs{X} \d P = \E{}{\abs{X}} < \infty.
+    \end{align*}
+\end{proof}
+
+\begin{lem}[Uniqueness]
+    If $Y'$ also satisfies (i) and (ii),
+    \begin{align*}
+        \int_A Y \d P = \int_A Y' \d P \text{ for all } A \in \mc{F}.
+    \end{align*}
+\end{lem}
+\begin{proof}
+    Take any $\epsilon > 0$ and let $A = \br{\omega \in \Omega: Y(\omega) - Y'(\omega) \leq \epsilon}$, which is $\mc{F}$ measurable because $Y - Y'$ is measurable and $[\epsilon, \infty) \in \mc{R}$. Then,
+    \begin{align*}
+        0 &= \int_A X - X \d P\\
+        &= \int_A X \d P - \int_A X \d P\\
+        &= \int_A Y \d P - \int_A Y' \d P\\
+        &= \int_A Y -Y' \d P\\
+        &\geq \epsilon P(A),
+    \end{align*}
+    indicating that $P(A) = P(Y - Y' \geq \epsilon) = 0$, or that $Y \geq Y'$ a.e.. Switching the roles of $Y$ and $Y'$ gives that $Y = Y'$ a.e.. 
+\end{proof}
+
+Before showing existence, we recall the following definitions and results.
+
+\begin{defi}[Absolute continuity]
+    Let $\nu$ and $\mu$ be measures defined on the same measurable space. Then, {\it $\nu$ is absolutely continuous with respect to $\mu$} (written $\nu \ll \mu$), if $\mu(A) = 0$ implies $\nu(A) = 0$ for all measurable sets $A$.
+\end{defi}
+\begin{defi}[$\sigma$-finite measure]
+    A measure $\mu$ on measurable space $\p{\Omega, \mc{F}}$ is called $\sigma$-finite is there exists a sequence $A_1, A_2, ... \in \mc{F}$ such that 
+    \begin{itemize}
+        \item $\mu(A_i) < \infty$ for each $i = 1, 2, ...$, and 
+        \item $\bigcup_{i=1}^\infty A_i = \Omega$.
+    \end{itemize}
+    In other words, the entire set can be written as a countable union of sets of finite measure.
+\end{defi}
+\begin{thm}[Radon-Nokodym theorem]
+    Let $\nu$ and $\mu$ be two $\sigma$-finite measures on $\p{\Omega, \mc{F}}$. If $\nu \ll \mu$, then there is a $\p{\mc{F}, \mc{R}}$-function $f: \Omega \rightarrow \R$ such that for all $A \in \mc{F}$,
+    \begin{align*}
+        \int_A f \d \mu = \nu(A).
+    \end{align*}
+    THe function $f$ is written $\frac{\d \nu}{\d \mu}$ and called the {\it Radon-Nikodym derivative}.
+\end{thm}
+
+\begin{lem}[Existence]
+    There exists a $Y$ that satisfies the defining properties of conditional expectation.
+\end{lem}
+\begin{proof}
+    First, suppose that $X \geq 0$, let $\mu = P$, and define
+    \begin{align*}
+        \nu(A) := \int_A X \d P \text{ for any } A \in \mc{F}.
+    \end{align*}
+    The monotone convergence theorem, along with a sequence of non-negative simple functions $X_n: \Omega \rightarrow [0, \infty)]$ that approach $X$ pointwise, can be used to show that $\nu$ is a measure. Then, the definition clearly shows that $\mu(A) = 0 \implies \nu(A) = 0$, so $\nu \ll \mu$. Thus, by the Radon-Nikodym theorem,
+    \begin{align*}
+        \int_A X \d P = \nu(A) = \int_A \frac{\d \nu}{\d \mu} \d P.
+    \end{align*}
+    Letting $A = \Omega$, we have that $Y := \frac{\d \nu}{\d \mu}$ is $\p{\mc{F}, \mc{R}}$-measurable and integrable, and because its non-negative, $\E{}{\abs{Y}} < \infty$. Thus, both properties are satisfied, and $Y$ is a version of $\E{}{X | \mc{F}}$. 
+
+    For the general case, let $X^+$ and $X^-$ be the nonnegative and nonpositive parts of $X$, and let $Y_1 = \E{}{X^+|\mc{F}}$ and $Y_2 = \E{}{X^- | \mc{F}}$. Now, $Y_1 - Y_2$ is integrable, and for all $A \in \mc{F}$, we have
+    \begin{align*}
+        \int_A X \d P &= \int_A X^+ \d P - \int_A X^- \d P\\
+        &= \int_A Y_1 \d P - \int_A Y_2 \d P\\
+        &= \int_A \p{Y_1 - Y_2} \d P.
+    \end{align*}
+    Thus, $Y_1 - Y_2$ is a version of $\E{}{X | \mc{F}}$.
+\end{proof}
+
+
+
+

@@ -16,6 +16,7 @@
 \usepackage{float}
 \usepackage{color}
 \usepackage[mathscr]{euscript}
+\usepackage{enumitem}
 
 \definecolor{problem}{cmyk}{0, 0.7808, 0.4429, 0.1412}
 
@@ -57,13 +58,12 @@
 
 \theoremstyle{plain}
 \newtheorem{thm}{Theorem}[section]
-\newtheorem{lem}{Lemma}[section]
-\newtheorem{prop}{Proposition}[section]
-\newtheorem{coro}{Corollary}[section]
-\newtheorem{obs}{Observation}[section]
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{coro}[thm]{Corollary}
 
 \theoremstyle{definition}
-\newtheorem{defi}{Definition}[section]
+\newtheorem{defi}[thm]{Definition}
 
 \theoremstyle{remark}
 \newtheorem{exm}{Example}[section]
@@ -129,10 +129,16 @@
 \tableofcontents
 \newpage
 
+% \clearpage
+
+% \bibliographystyle{abbrvnat}
+% \bibliography{bibliography}
+
 \clearpage
 \appendix
 
 \section{Foundations}
 \label{sec:foundation}
+\input{foundations}
 
 \end{document}
