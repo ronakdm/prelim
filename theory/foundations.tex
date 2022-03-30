@@ -158,7 +158,13 @@ Next, we establish some properties of conditional expectation.
             &\geq \epsilon P(A),
         \end{align*}
         so the set set $A$ has zero measure for all $\epsilon$. This means that $\E{}{X | \mc{F}} \leq \E{}{Y | \mc{F}}$ a.e..
-        \item First, let $Y_n = X - X_n$. Due to linearity and monotonicity, it sufficies to show that $\E{}{Y_n | \mc{F}} \downarrow 0$. Because $X(\omega) \geq Y_n(\omega) \geq 0$, and $Y_n(\omega)$ in monotonically non-increasing in $n$,  
+        \item First, let $Y_n = X - X_n$. Due to linearity and monotonicity, it sufficies to show that $Z_n := \E{}{Y_n | \mc{F}} \downarrow 0$. Because $Y_n(\omega)$ in monotonically non-increasing in $n$, there exists a set $\Omega_0$ of measure one such that for each $\omega \in \Omega_0$, we have that $Z_n(\omega)$ is bounded (within $[0, X(\omega)]$) and non-increasing, indicating convergence. String together these limits on $\Omega_0$ to be the function $Z_\infty$, defined arbitrarily on $\Omega_0^c$.
+
+        Then, for any $A \in \mc{F}$,
+        \begin{align*}
+            \lim_{n \rightarrow \infty} \int_A Z_n \d P = \lim_{n \rightarrow \infty} \int_A Y_n \d P \overset{\text{DCT}}{=} \int_A \lim_{n \rightarrow \infty} Y_n \d P = 0.
+        \end{align*}
+        The dominated convergence theorem applies because $0 \leq Y_n(\omega) \leq X(\omega)$, with $X$ integrable by definition of conditional expectation.
     \end{enumerate}
 \end{proof}
 
