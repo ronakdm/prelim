@@ -1,24 +1,42 @@
 import torch
+import math
 
 # import numpy as np
 
 from hypothesis_tests import get_test, NEWCORR
 
+# Parameters.
 N = 100
 NOISE_LEVELS = 10
 NOISE_SCALE = 3
-LINEAR = "linear"
 ALPHA = 0.05
-
 # Number of samples to use to estimate the power (number of tests).
 NUM_SIMS_TEST = 500
 # Number of samples to use to estimate the distribution of the test statistic.
 NUM_SIMS_DIST = 500
 
+# Relationships.
+LINEAR = "linear"
+STEP_FUNC = "step_function"
+W_SHAPED = "w_shaped"
+SINUSOID = "sinusoid"
+CIRCULAR = "circular"
+HETERO = "heteroskedastic"
+
 
 def get_data(relationship, noise_level):
     if relationship == LINEAR:
         return get_linear(noise_level)
+    elif relationship == STEP_FUNC:
+        return get_step_function(noise_level)
+    elif relationship == W_SHAPED:
+        return get_w_shaped(noise_level)
+    elif relationship == SINUSOID:
+        return get_sinusoid(noise_level)
+    elif relationship == CIRCULAR:
+        return get_circular(noise_level)
+    elif relationship == HETERO:
+        return get_heteroskedastic(noise_level)
     else:
         raise ValueError(f"Unrecognized function type {relationship}!")
 
@@ -30,7 +48,54 @@ def get_linear(noise_level):
     return x, y
 
 
-# TODO: parallelize.
+def get_step_function(noise_level):
+    x = 2 * torch.rand(N) - 1
+    noise = torch.normal(torch.zeros(N), torch.ones(N))
+    y = (
+        -3.0 * (x < -0.5)
+        + 2.0 * (torch.logical_and(x >= -0.5, x < 0))
+        - 4.0 * (torch.logical_and(x >= 0, x < 0.5))
+        - 3.0 * (x >= 0.5)
+    )
+    y += 10 * noise_level / NOISE_LEVELS * noise
+    return x, y
+
+
+def get_w_shaped(noise_level):
+    x = 2 * torch.rand(N) - 1
+    noise = torch.normal(torch.zeros(N), torch.ones(N))
+    y = torch.abs(x + 0.5) * (x < 0) + torch.abs(x - 0.5) * (x >= 0)
+    y += 0.25 * NOISE_SCALE * noise_level / NOISE_LEVELS * noise
+    return x, y
+
+
+def get_sinusoid(noise_level):
+    x = 2 * torch.rand(N) - 1
+    noise = torch.normal(torch.zeros(N), torch.ones(N))
+    y = torch.cos(8 * math.pi * x) + NOISE_SCALE * noise_level / NOISE_LEVELS * noise
+    return x, y
+
+
+def get_circular(noise_level):
+    x = 2 * torch.rand(N) - 1
+    noise = torch.normal(torch.zeros(N), torch.ones(N))
+    rademacher = 2 * torch.bernoulli(0.5 * torch.ones(N)) - 1
+    y = rademacher * torch.sqrt(1 - x ** 2)
+    y += 0.3 * NOISE_SCALE * noise_level / NOISE_LEVELS * noise
+    return x, y
+
+
+def get_heteroskedastic(noise_level):
+    x = 2 * torch.rand(N) - 1
+    noise = torch.normal(torch.zeros(N), torch.ones(N))
+    y = NOISE_SCALE * (
+        3 * (torch.abs(x) < 0.5) * (1 - noise_level / NOISE_LEVELS)
+        + noise_level / NOISE_LEVELS
+    )
+    y *= noise
+    return x, y
+
+
 def compute_critical_vals(
     relationship=LINEAR, test_name=NEWCORR, num_sims=NUM_SIMS_DIST
 ):
@@ -50,7 +115,6 @@ def compute_critical_vals(
     )
 
 
-# TODO: parallelize.
 def compute_powers(relationship=LINEAR, test_name=NEWCORR, num_sims=NUM_SIMS_TEST):
     test = get_test(test_name)
     powers = torch.zeros(NOISE_LEVELS + 1)
@@ -65,7 +129,8 @@ def compute_powers(relationship=LINEAR, test_name=NEWCORR, num_sims=NUM_SIMS_TES
     torch.save(powers, f"results/power/{relationship}_{test_name}_powers.pt")
 
 
-if __name__ == "main":
-    compute_critical_vals(num_sims=500)
-    compute_powers(num_sims=500)
+if __name__ == "__main__":
+    relationship = HETERO
+    compute_critical_vals(relationship=relationship)
+    compute_powers(relationship=relationship)
 
