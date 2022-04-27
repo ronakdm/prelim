@@ -5,7 +5,6 @@ NOISE_LEVELS <- 10
 N <- 100
 
 # Hypothesis tests.
-
 library(energy)
 DCOR <- "dcor"
 
@@ -39,7 +38,7 @@ run_test <- function(x, y, test_name) {
   } else if (test_name == HHG) {
     return(Fast.independence.test(x,y, NullTable = NT, combining.type = 'Fisher')$Fisher)
   } else {
-    throw("Unrecignized 'test_name': ", test_name)
+    throw("Unrecognized 'test_name': ", test_name)
   }
 }
 
@@ -74,7 +73,7 @@ get_power <- function(test_name, relationship, noise_level) {
 
 get_powers <- function(test_name, relationship) {
   powers <- c()
-  for (noise_level in 0:NOISE_LEVELS ) {
+  for (noise_level in 0:NOISE_LEVELS) {
     powers <- c(powers, get_power(test_name, relationship, noise_level))
   }
   fname <- sprintf("results/power/%s_power_%s.txt", test_name, relationship)
@@ -82,10 +81,12 @@ get_powers <- function(test_name, relationship) {
 }
 
 
-# relationships <- c(LINEAR)
-relationships <- c(STEP_FUNC, W_SHAPED, SINUSOID, CIRCULAR, HETERO)
-test_name <- HHG
-for (relationship in relationships) {
-  print(sprintf("Computing '%s' power on '%s' relationship...", test_name, relationship))
-  get_powers(test_name, relationship)
+relationships <- c(STEP_FUNC)
+# relationships <- c(LINEAR, W_SHAPED, SINUSOID, CIRCULAR, HETERO)
+test_names <- c(DCOR, HSIC, MIC, HHG)
+for (test_name in test_names) {
+  for (relationship in relationships) {
+    print(sprintf("Computing '%s' power on '%s' relationship...", test_name, relationship))
+    get_powers(test_name, relationship)
+  }
 }
