@@ -12,7 +12,7 @@ def get_test(test_name):
         raise ValueError(f"Unrecognized test {test_name}!")
 
 
-def correlation(x, y):
+def correlation(x, y, compute_pvalue=False):
     x = x - x.mean()
     y = y - y.mean()
 
@@ -70,10 +70,3 @@ def benjamini_hochberg(pvalues, fdr=0.05):
         return idx[0:num_rejects]
     else:
         return []
-
-
-x = torch.rand(10)
-y = torch.rand(10)
-
-
-stat, pvalue = chatterjee(x, y, compute_pvalue=True)

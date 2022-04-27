@@ -1,7 +1,8 @@
 import torch
 import math
 
-# import numpy as np
+import numpy as np
+import pandas as pd
 
 from hypothesis_tests import get_test, NEWCORR
 
@@ -96,6 +97,23 @@ def get_heteroskedastic(noise_level):
     return x, y
 
 
+def save_distributions(relationship, marginal=False, num_sims=NUM_SIMS_DIST):
+    for j, noise_level in enumerate(range(NOISE_LEVELS + 1)):
+        data = torch.zeros(N, 2 * num_sims)
+        for i in range(num_sims):
+            x, y = get_data(relationship, noise_level)
+            if marginal:
+                # Resimulate to get the null scenario.
+                x = 2 * torch.rand(N) - 1
+            data[:, 2 * i] = x
+            data[:, 2 * i + 1] = y
+        df = pd.DataFrame(data.numpy())
+        if marginal:
+            df.to_csv(f"data/power/{relationship}_noise_level_{j}_marginal.csv")
+        else:
+            df.to_csv(f"data/power/{relationship}_noise_level_{j}_joint.csv")
+
+
 def compute_critical_vals(
     relationship=LINEAR, test_name=NEWCORR, num_sims=NUM_SIMS_DIST
 ):
@@ -130,7 +148,7 @@ def compute_powers(relationship=LINEAR, test_name=NEWCORR, num_sims=NUM_SIMS_TES
 
 
 if __name__ == "__main__":
-    relationship = HETERO
-    compute_critical_vals(relationship=relationship)
-    compute_powers(relationship=relationship)
+    for relationship in [LINEAR, STEP_FUNC, W_SHAPED, SINUSOID, CIRCULAR, HETERO]:
+        save_distributions(relationship, marginal=True)
+        save_distributions(relationship, marginal=False)
 
