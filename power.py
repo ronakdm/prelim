@@ -49,6 +49,9 @@ def get_linear(noise_level):
     return x, y
 
 
+# y = -3*(x< -.5) + 2*(x >= -.5 & x<0) - 4*(x>=0 & x < .5) - 3*(x>=.5) + 10*(l/num.noise)*rnorm(n)
+
+
 def get_step_function(noise_level):
     x = 2 * torch.rand(N) - 1
     noise = torch.normal(torch.zeros(N), torch.ones(N))
@@ -58,7 +61,7 @@ def get_step_function(noise_level):
         - 4.0 * (torch.logical_and(x >= 0, x < 0.5))
         - 3.0 * (x >= 0.5)
     )
-    y += 10 * noise_level / NOISE_LEVELS * noise
+    y += 10.0 * noise_level / NOISE_LEVELS * noise
     return x, y
 
 
@@ -152,7 +155,7 @@ def compute_powers(relationship=LINEAR, test_name=NEWCORR, num_sims=NUM_SIMS_TES
 
 
 if __name__ == "__main__":
-    for relationship in [LINEAR, STEP_FUNC, W_SHAPED, SINUSOID, CIRCULAR, HETERO]:
+    for relationship in [STEP_FUNC]:
         save_distributions(relationship, marginal=True)
         save_distributions(relationship, marginal=False)
 

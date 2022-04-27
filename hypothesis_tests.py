@@ -3,6 +3,10 @@ import math
 from scipy.stats import norm
 
 NEWCORR = "new_correlation"
+DCOR = "dcor"
+HSIC = "hsic"
+MIC = "mic"
+HHG = "hhg"
 
 
 def get_test(test_name):

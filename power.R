@@ -1,7 +1,23 @@
-library(energy)
+setwd("~/research/prelim")
 
 # Hyperparameters.
 NOISE_LEVELS <- 10
+N <- 100
+
+# Hypothesis tests.
+
+library(energy)
+DCOR <- "dcor"
+
+library(dHSIC)
+HSIC <- "hsic"
+
+library(minerva)
+MIC <- "mic"
+
+library(HHG)
+HHG <- "hhg"
+NT = Fast.independence.test.nulltable(n = N)
 
 # Relationships.
 LINEAR <- "linear"
@@ -11,12 +27,19 @@ SINUSOID <- "sinusoid"
 CIRCULAR <- "circular"
 HETERO <- "heteroskedastic"
 
-DCOR <- "dcor"
 
 run_test <- function(x, y, test_name) {
   if (test_name == DCOR) {
     # from energy package.
     return(dcor(x, y))
+  } else if (test_name == HSIC) {
+    return(dhsic(x,y)$dHSIC)
+  } else if (test_name == MIC) {
+    return(cstats(as.matrix(x),as.matrix(y))[3])
+  } else if (test_name == HHG) {
+    return(Fast.independence.test(x,y, NullTable = NT, combining.type = 'Fisher')$Fisher)
+  } else {
+    throw("Unrecignized 'test_name': ", test_name)
   }
 }
 
@@ -58,6 +81,11 @@ get_powers <- function(test_name, relationship) {
   write.table(unlist(powers), file=fname, col.names=F, row.names=F)
 }
 
-test_name <- DCOR
-relationship <- CIRCULAR
-noise_level <- 0
+
+# relationships <- c(LINEAR)
+relationships <- c(STEP_FUNC, W_SHAPED, SINUSOID, CIRCULAR, HETERO)
+test_name <- HHG
+for (relationship in relationships) {
+  print(sprintf("Computing '%s' power on '%s' relationship...", test_name, relationship))
+  get_powers(test_name, relationship)
+}
