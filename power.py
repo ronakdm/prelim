@@ -109,9 +109,13 @@ def save_distributions(relationship, marginal=False, num_sims=NUM_SIMS_DIST):
             data[:, 2 * i + 1] = y
         df = pd.DataFrame(data.numpy())
         if marginal:
-            df.to_csv(f"data/power/{relationship}_noise_level_{j}_marginal.csv")
+            df.to_csv(
+                f"data/power/{relationship}_noise_level_{j}_marginal.csv", index=False
+            )
         else:
-            df.to_csv(f"data/power/{relationship}_noise_level_{j}_joint.csv")
+            df.to_csv(
+                f"data/power/{relationship}_noise_level_{j}_joint.csv", index=False
+            )
 
 
 def compute_critical_vals(
