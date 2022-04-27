@@ -3,9 +3,12 @@ import math
 from scipy.stats import norm
 
 NEWCORR = "new_correlation"
+COR = "correlation"
+MAXCOR = "maxcor"
 DCOR = "dcor"
 HSIC = "hsic"
 MIC = "mic"
+TIC = "tic"
 HHG = "hhg"
 
 
