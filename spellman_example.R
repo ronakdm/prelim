@@ -20,7 +20,7 @@ TIC <- "tic"
 
 suppressPackageStartupMessages(library(HHG))
 HHG <- "hhg"
-NT = Fast.independence.test.nulltable(n = 23)
+NT = Fast.independence.test.nulltable(n = 23, nr.perm = 1000)
 
 # Get p-value of corresponding test. No MAXCOR and MIC from paper.
 get_pvalue <- function(x, y, test_name) {
@@ -54,7 +54,7 @@ get_pvalues <- function(test_name) {
 }
 
 # tests <- c(COR, DCOR, HSIC, HHG, TIC)
-tests <- c(TIC)
+tests <- c(HHG)
 for (test_name in tests) {
   get_pvalues(test_name)
 }

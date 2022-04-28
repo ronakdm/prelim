@@ -4,7 +4,7 @@ from scipy.stats import norm
 
 NEWCORR = "new_correlation"
 COR = "correlation"
-MAXCOR = "maxcor"
+# MAXCOR = "maxcor"
 DCOR = "dcor"
 HSIC = "hsic"
 MIC = "mic"
@@ -71,9 +71,9 @@ def benjamini_hochberg(pvalues, fdr=0.05):
     m = len(pvalues)
     sorted_vals, idx = torch.sort(pvalues)
     thres = fdr * (torch.arange(m) + 1) / m
-    candidates = torch.arange(m)[sorted_vals < thres]
+    candidates = torch.arange(m)[sorted_vals <= thres]
     if len(candidates) > 0:
         num_rejects = torch.max(candidates).item()
-        return idx[0:num_rejects]
+        return idx[0 : (num_rejects + 1)]
     else:
         return []
