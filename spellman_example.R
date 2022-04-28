@@ -1,15 +1,12 @@
 setwd("~/research/prelim")
 
-# Data.
-N <- 100
-
 # Hypothesis tests.
 
 # Contained in base R.
 COR <- "correlation"
 
-library(acepack)
-MAXCOR <- "maxcor"
+# library(acepack)
+# MAXCOR <- "maxcor"
 
 library(energy)
 DCOR <- "dcor"
@@ -18,12 +15,12 @@ library(dHSIC)
 HSIC <- "hsic"
 
 library(minerva)
-MIC <- "mic"
+# MIC <- "mic"
 TIC <- "tic"
 
-library(HHG)
+suppressPackageStartupMessages(library(HHG))
 HHG <- "hhg"
-NT = Fast.independence.test.nulltable(n = N)
+NT = Fast.independence.test.nulltable(n = 23)
 
 # Get p-value of corresponding test. No MAXCOR and MIC from paper.
 get_pvalue <- function(x, y, test_name) {
@@ -41,3 +38,25 @@ get_pvalue <- function(x, y, test_name) {
     throw("Unrecognized 'test_name': ", test_name)
   }
 }
+
+spellman <- read.csv(file = 'data/spellman_gene_expr_data.csv')
+genes <- names(spellman)[2:ncol(spellman)]
+x <- spellman[, "time"]
+
+get_pvalues <- function(test_name) {
+  apply_test <- function(gene) {
+    y <- spellman[, gene]
+    get_pvalue(x, y, test_name)
+  }
+  fname <- sprintf("results/spellman/%s_pvalues.txt", test_name)
+  pvalues <- unlist(lapply(genes, apply_test))
+  write.table(pvalues, file=fname, col.names=F, row.names=F)
+}
+
+# tests <- c(COR, DCOR, HSIC, HHG, TIC)
+tests <- c(TIC)
+for (test_name in tests) {
+  get_pvalues(test_name)
+}
+
+
