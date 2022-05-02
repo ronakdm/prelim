@@ -25,12 +25,16 @@ NT = Fast.independence.test.nulltable(n = 23, nr.perm = 1000)
 # Get p-value of corresponding test. No MAXCOR and MIC from paper.
 get_pvalue <- function(x, y, test_name) {
   if (test_name == DCOR) {
+    set.seed(1)
     return(dcor.test(x, y, R = 1000)$p.value)
   } else if (test_name == HSIC) {
+    set.seed(1)
     return(dhsic.test(x, y)$p.value)
   } else if (test_name == HHG) {
+    set.seed(1)
     return(Fast.independence.test(x,y, NullTable = NT, combining.type = 'Fisher')$Fisher.pvalue)
   } else if (test_name == TIC){
+    set.seed(1)
     return(as.numeric(mictools(cbind(x, y), nperm = 1000)$pval[1]))
   } else if (test_name == COR) {
     return(cor.test(x, y)$p.value)

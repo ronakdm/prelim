@@ -74,6 +74,6 @@ def benjamini_hochberg(pvalues, fdr=0.05):
     candidates = torch.arange(m)[sorted_vals <= thres]
     if len(candidates) > 0:
         num_rejects = torch.max(candidates).item()
-        return idx[0 : (num_rejects + 1)]
+        return torch.sort(idx[0 : (num_rejects + 1)].int())[0]
     else:
         return []
