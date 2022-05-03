@@ -26,6 +26,23 @@ SINUSOID <- "sinusoid"
 CIRCULAR <- "circular"
 HETERO <- "heteroskedastic"
 
+get_pvalue <- function(x, y, test_name) {
+  if (test_name == DCOR) {
+    set.seed(1)
+    return(dcor.test(x, y, R = 1000)$p.value)
+  } else if (test_name == HSIC) {
+    set.seed(1)
+    return(dhsic.test(x, y)$p.value)
+  } else if (test_name == HHG) {
+    set.seed(1)
+    return(Fast.independence.test(x,y, NullTable = NT, combining.type = 'Fisher')$Fisher.pvalue)
+  }  else if (test_name == COR) {
+    return(cor.test(x, y)$p.value)
+  } else {
+    throw("Unrecognized 'test_name': ", test_name)
+  }
+}
+
 
 run_test <- function(x, y, test_name) {
   if (test_name == DCOR) {
@@ -71,6 +88,22 @@ get_power <- function(test_name, relationship, noise_level) {
   power
 }
 
+get_true_power <- function(test_name, relationship, noise_level) {
+  critical_value <- get_critical_value(test_name, relationship, noise_level)
+  fname <- sprintf("data/power/%s_noise_level_%d_joint.csv", relationship, noise_level)
+  df <- read.csv(file = fname)
+  n_col <- ncol(df)
+  apply_test <- function(i) {
+    x <- df[, 2 * i - 1]
+    y <- df[, 2 * i]
+    pval <- get_pvalue(x, y, test_name)
+    return(as.integer(pval <= 0.05))
+  }
+  rejects <- (unlist(lapply(1:(ncol(df) / 2), apply_test)) > critical_value)
+  power <- mean(rejects)
+  power
+}
+
 get_powers <- function(test_name, relationship) {
   powers <- c()
   for (noise_level in 0:NOISE_LEVELS) {
@@ -80,13 +113,24 @@ get_powers <- function(test_name, relationship) {
   write.table(unlist(powers), file=fname, col.names=F, row.names=F)
 }
 
+get_true_powers <- function(test_name, relationship) {
+  powers <- c()
+  for (noise_level in 0:NOISE_LEVELS) {
+    powers <- c(powers, get_true_power(test_name, relationship, noise_level))
+  }
+  fname <- sprintf("results/power/%s_true_power_%s.txt", test_name, relationship)
+  write.table(unlist(powers), file=fname, col.names=F, row.names=F)
+}
 
-relationships <- c(STEP_FUNC)
-# relationships <- c(LINEAR, W_SHAPED, SINUSOID, CIRCULAR, HETERO)
-test_names <- c(DCOR, HSIC, MIC, HHG)
+
+
+# relationships <- c(LINEAR, STEP_FUNC, W_SHAPED, SINUSOID, CIRCULAR, HETERO)
+relationships <- c(LINEAR, STEP_FUNC, W_SHAPED, SINUSOID, CIRCULAR, HETERO)
+# test_names <- c(DCOR, HSIC, MIC, HHG)
+test_names <- c(HSIC)
 for (test_name in test_names) {
   for (relationship in relationships) {
     print(sprintf("Computing '%s' power on '%s' relationship...", test_name, relationship))
-    get_powers(test_name, relationship)
+    get_true_powers(test_name, relationship)
   }
 }

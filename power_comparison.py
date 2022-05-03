@@ -154,8 +154,21 @@ def compute_powers(relationship=LINEAR, test_name=NEWCORR, num_sims=NUM_SIMS_TES
     torch.save(powers, f"results/power/{relationship}_{test_name}_powers.pt")
 
 
+def compute_true_powers(relationship=LINEAR, test_name=NEWCORR, num_sims=NUM_SIMS_TEST):
+    test = get_test(test_name)
+    powers = torch.zeros(NOISE_LEVELS + 1)
+    for i, noise_level in enumerate(range(NOISE_LEVELS + 1)):
+        rejects = 0
+        for _ in range(num_sims):
+            x, y = get_data(relationship, noise_level)
+            stat, pval = test(x, y, compute_pvalue=True)
+            if pval <= ALPHA:
+                rejects += 1
+        powers[i] = rejects / num_sims
+    torch.save(powers, f"results/power/{relationship}_{test_name}_true_powers.pt")
+
+
 if __name__ == "__main__":
-    for relationship in [STEP_FUNC]:
-        save_distributions(relationship, marginal=True)
-        save_distributions(relationship, marginal=False)
+    for relationship in [LINEAR, STEP_FUNC, W_SHAPED, SINUSOID, CIRCULAR, HETERO]:
+        compute_true_powers(relationship=relationship, test_name=NEWCORR)
 
