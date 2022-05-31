@@ -16,7 +16,7 @@ MIC <- "mic"
 
 library(HHG)
 HHG <- "hhg"
-NT = Fast.independence.test.nulltable(n = N)
+NT <- Fast.independence.test.nulltable(n = N)
 
 # Relationships.
 LINEAR <- "linear"
@@ -35,8 +35,8 @@ get_pvalue <- function(x, y, test_name) {
     return(dhsic.test(x, y)$p.value)
   } else if (test_name == HHG) {
     set.seed(1)
-    return(Fast.independence.test(x,y, NullTable = NT, combining.type = 'Fisher')$Fisher.pvalue)
-  }  else if (test_name == COR) {
+    return(Fast.independence.test(x, y, NullTable = NT, combining.type = "Fisher")$Fisher.pvalue)
+  } else if (test_name == COR) {
     return(cor.test(x, y)$p.value)
   } else {
     throw("Unrecognized 'test_name': ", test_name)
@@ -49,11 +49,11 @@ run_test <- function(x, y, test_name) {
     # from energy package.
     return(dcor(x, y))
   } else if (test_name == HSIC) {
-    return(dhsic(x,y)$dHSIC)
+    return(dhsic(x, y)$dHSIC)
   } else if (test_name == MIC) {
-    return(cstats(as.matrix(x),as.matrix(y))[3])
+    return(cstats(as.matrix(x), as.matrix(y))[3])
   } else if (test_name == HHG) {
-    return(Fast.independence.test(x,y, NullTable = NT, combining.type = 'Fisher')$Fisher)
+    return(Fast.independence.test(x, y, NullTable = NT, combining.type = "Fisher")$Fisher)
   } else {
     throw("Unrecognized 'test_name': ", test_name)
   }
@@ -110,7 +110,7 @@ get_powers <- function(test_name, relationship) {
     powers <- c(powers, get_power(test_name, relationship, noise_level))
   }
   fname <- sprintf("results/power/%s_power_%s.txt", test_name, relationship)
-  write.table(unlist(powers), file=fname, col.names=F, row.names=F)
+  write.table(unlist(powers), file = fname, col.names = F, row.names = F)
 }
 
 get_true_powers <- function(test_name, relationship) {
@@ -119,7 +119,7 @@ get_true_powers <- function(test_name, relationship) {
     powers <- c(powers, get_true_power(test_name, relationship, noise_level))
   }
   fname <- sprintf("results/power/%s_true_power_%s.txt", test_name, relationship)
-  write.table(unlist(powers), file=fname, col.names=F, row.names=F)
+  write.table(unlist(powers), file = fname, col.names = F, row.names = F)
 }
 
 
@@ -127,7 +127,7 @@ get_true_powers <- function(test_name, relationship) {
 # relationships <- c(LINEAR, STEP_FUNC, W_SHAPED, SINUSOID, CIRCULAR, HETERO)
 relationships <- c(LINEAR, STEP_FUNC, W_SHAPED, SINUSOID, CIRCULAR, HETERO)
 # test_names <- c(DCOR, HSIC, MIC, HHG)
-test_names <- c(HSIC)
+test_names <- c(HHG)
 for (test_name in test_names) {
   for (relationship in relationships) {
     print(sprintf("Computing '%s' power on '%s' relationship...", test_name, relationship))
