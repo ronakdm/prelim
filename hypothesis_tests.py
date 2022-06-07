@@ -2,6 +2,8 @@ import torch
 import math
 from scipy.stats import norm
 
+from hyppo.independence import Hsic
+
 NEWCORR = "new_correlation"
 COR = "correlation"
 # MAXCOR = "maxcor"
@@ -15,6 +17,8 @@ HHG = "hhg"
 def get_test(test_name):
     if test_name == NEWCORR:
         return chatterjee
+    elif test_name == HSIC:
+        return hsic
     else:
         raise ValueError(f"Unrecognized test {test_name}!")
 
@@ -24,6 +28,17 @@ def correlation(x, y, compute_pvalue=False):
     y = y - y.mean()
 
     return (x @ y) / math.sqrt((x ** 2).sum() * (y ** 2).sum())
+
+
+def hsic(x, y, compute_pvalue=False):
+    hsic = Hsic()
+    x = x.numpy().reshape(-1, 1)
+    y = y.numpy().reshape(-1, 1)
+    if compute_pvalue:
+        stat, pvalue = hsic.test(x, y)
+        return stat, pvalue
+    else:
+        return hsic.statistic(x, y)
 
 
 def chatterjee(x, y, compute_pvalue=False):
@@ -62,6 +77,8 @@ def chatterjee(x, y, compute_pvalue=False):
 
         tau2 = ((a - 2 * b + c ** 2) / d ** 2).item()
         pvalue = 1 - norm.cdf(stat * math.sqrt(n / tau2))
+        if math.isnan(pvalue):
+            pvalue = 1e-12
         return stat, pvalue
 
     return stat

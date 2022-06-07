@@ -4,7 +4,7 @@ import math
 import numpy as np
 import pandas as pd
 
-from hypothesis_tests import get_test, NEWCORR
+from hypothesis_tests import get_test, NEWCORR, HSIC
 
 # Parameters.
 N = 100
@@ -169,6 +169,7 @@ def compute_true_powers(relationship=LINEAR, test_name=NEWCORR, num_sims=NUM_SIM
 
 
 if __name__ == "__main__":
-    for relationship in [LINEAR, STEP_FUNC, W_SHAPED, SINUSOID, CIRCULAR, HETERO]:
-        compute_true_powers(relationship=relationship, test_name=NEWCORR)
+    for relationship in [STEP_FUNC, W_SHAPED, SINUSOID, CIRCULAR, HETERO]:
+        # for relationship in [LINEAR]:
+        compute_true_powers(relationship=relationship, test_name=HSIC)
 

@@ -1,4 +1,5 @@
 setwd("~/research/prelim")
+COR <- "correlation"
 
 # Hyperparameters.
 NOISE_LEVELS <- 10
@@ -13,8 +14,9 @@ HSIC <- "hsic"
 
 library(minerva)
 MIC <- "mic"
+TIC <- "tic"
 
-library(HHG)
+suppressPackageStartupMessages(library(HHG))
 HHG <- "hhg"
 NT <- Fast.independence.test.nulltable(n = N)
 
@@ -36,10 +38,13 @@ get_pvalue <- function(x, y, test_name) {
   } else if (test_name == HHG) {
     set.seed(1)
     return(Fast.independence.test(x, y, NullTable = NT, combining.type = "Fisher")$Fisher.pvalue)
+  } else if (test_name == TIC){
+    set.seed(1)
+    return(as.numeric(mictools(cbind(x, y), nperm = 1000)$pval[1]))
   } else if (test_name == COR) {
     return(cor.test(x, y)$p.value)
   } else {
-    throw("Unrecognized 'test_name': ", test_name)
+    stop("Unrecognized 'test_name': ", test_name)
   }
 }
 
@@ -55,7 +60,7 @@ run_test <- function(x, y, test_name) {
   } else if (test_name == HHG) {
     return(Fast.independence.test(x, y, NullTable = NT, combining.type = "Fisher")$Fisher)
   } else {
-    throw("Unrecognized 'test_name': ", test_name)
+    stop("Unrecognized 'test_name': ", test_name)
   }
 }
 
@@ -89,7 +94,7 @@ get_power <- function(test_name, relationship, noise_level) {
 }
 
 get_true_power <- function(test_name, relationship, noise_level) {
-  critical_value <- get_critical_value(test_name, relationship, noise_level)
+  # critical_value <- get_critical_value(test_name, relationship, noise_level)
   fname <- sprintf("data/power/%s_noise_level_%d_joint.csv", relationship, noise_level)
   df <- read.csv(file = fname)
   n_col <- ncol(df)
@@ -99,7 +104,7 @@ get_true_power <- function(test_name, relationship, noise_level) {
     pval <- get_pvalue(x, y, test_name)
     return(as.integer(pval <= 0.05))
   }
-  rejects <- (unlist(lapply(1:(ncol(df) / 2), apply_test)) > critical_value)
+  rejects <- unlist(lapply(1:(ncol(df) / 2), apply_test))
   power <- mean(rejects)
   power
 }
@@ -124,10 +129,10 @@ get_true_powers <- function(test_name, relationship) {
 
 
 
-# relationships <- c(LINEAR, STEP_FUNC, W_SHAPED, SINUSOID, CIRCULAR, HETERO)
-relationships <- c(LINEAR, STEP_FUNC, W_SHAPED, SINUSOID, CIRCULAR, HETERO)
+relationships <- c(STEP_FUNC, W_SHAPED, SINUSOID, CIRCULAR, HETERO)
+# relationships <- c(LINEAR)
 # test_names <- c(DCOR, HSIC, MIC, HHG)
-test_names <- c(HHG)
+test_names <- c(COR)
 for (test_name in test_names) {
   for (relationship in relationships) {
     print(sprintf("Computing '%s' power on '%s' relationship...", test_name, relationship))
