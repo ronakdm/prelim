@@ -1,5 +1,5 @@
 from hyppo.tools import SIMULATIONS
-from hypothesis_tests import get_test, NEWCORR
+from hypothesis_tests import get_test, NEWCORR, BOOSTED
 
 from joblib import Parallel, delayed
 import pickle
@@ -26,19 +26,18 @@ def compute_power(sim_name, n, test_name, n_sims=100):
     return rejects.mean()
 
 
-sample_sizes = np.logspace(100, 10000, 30).astype(int)
+sample_sizes = np.logspace(2, 4, 30).astype(np.int64)
 pickle.dump(sample_sizes, open("results/boosting/sample_sizes.p", "wb"))
 
 for n in sample_sizes:
     for sim_name in list(SIMULATIONS.keys())[0:-2]:
         print(f"n = {n} sim = {sim_name}")
-        test_name = NEWCORR
+        test_name = BOOSTED
         n_sims = 500
-        power = compute_power(sim_name, n, test_name, n_sims=n_sims)
+        power = compute_power(sim_name, int(n), test_name, n_sims=n_sims)
         pickle.dump(
             power,
             open(
                 f"results/boosting/sim_{sim_name}_test_{test_name}_n_{n}_power.p", "wb"
             ),
         )
-
